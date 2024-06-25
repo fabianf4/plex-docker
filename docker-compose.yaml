@@ -1,0 +1,32 @@
+version: "3.7"
+
+services:
+
+  samba:
+    image: dperson/samba
+    restart: unless-stopped
+    command: '-u "fabianfa;fabianfa" -s "media;/media;yes;no;no;fabianfa" -p'
+    environment:
+      - TZ=America/Bogota
+    ports:
+      - 139:139
+      - 445:445
+    volumes:
+      - ./media:/media
+
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Bogota
+      - VERSION=docker
+      - PLEX_CLAIM= #optional
+    volumes:
+      - ./plex-config:/config
+      - ./media/series:/series
+      - ./media/movies:/movies
+      - ./media/music:/music
+    restart: unless-stopped
